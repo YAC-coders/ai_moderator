@@ -1,11 +1,17 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: `${process.env.VUE_APP_PROTOCOL}://${process.env.VUE_APP_HOSTNAME}:${process.env.VUE_APP_PORT}/api`,
+  baseURL: `${process.env.VUE_APP_PROTOCOL}://${process.env.VUE_APP_HOSTNAME}:${process.env.VUE_APP_PORT}`,
   timeout: 5000,
   headers: {
     'Content-Type': 'application/json',
   },
 })
 
-export default api
+const endpoints = {
+  sendMessage: '/messages',
+  getMessages: '/v1/message/all',
+  deleteMessage: '/v1/message/',
+}
+
+export { api, endpoints }
