@@ -9,6 +9,13 @@ export const messageRepository = {
       throw new Error('Failed to send message: ', error.message)
     }
   },
-  getMessages: {},
+  async getMessages() {
+    try {
+      const response = await api.get(endpoints.getMessages)
+      return response.data
+    } catch (error) {
+      throw new Error('Failed to load messages: ', error.message)
+    }
+  },
   deleteMessage: {},
 }

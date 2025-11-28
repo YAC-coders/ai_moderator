@@ -16,13 +16,12 @@ import { messageRepository } from 'src/repositories/messageRepository'
 
 const msg = ref('')
 
-const sendMessage = async () => {
-  const response = await messageRepository.sendMessage({
+const sendMessage = async () =>
+  await messageRepository.sendMessage({
     message: `${msg.value}`,
     date_time: Math.floor(Date.now() / 1000)
   })
-  console.log(response)
-}
+
 </script>
 <style scoped>
 .input-bar-container {
