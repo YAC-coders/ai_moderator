@@ -6,7 +6,7 @@ export const messageRepository = {
       const response = await api.post(endpoints.sendMessage, message)
       return response.data
     } catch (error) {
-      throw new Error('Failed to send message: ', error.message)
+      throw new Error('Failed to send message', error.message)
     }
   },
   async getMessages() {

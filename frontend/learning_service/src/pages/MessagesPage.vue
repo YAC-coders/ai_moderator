@@ -21,6 +21,6 @@ const messages = ref([])
 
 onMounted(async () => {
   messages.value = await messageRepository.getMessages()
-
+  messages.value.sort((a, b) => b.date_time - a.date_time)
 })
 </script>

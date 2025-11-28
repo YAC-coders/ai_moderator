@@ -13,14 +13,32 @@
 <script setup>
 import { ref } from 'vue'
 import { messageRepository } from 'src/repositories/messageRepository'
+import { Notify } from 'quasar'
 
 const msg = ref('')
 
-const sendMessage = async () =>
-  await messageRepository.sendMessage({
-    message: `${msg.value}`,
-    date_time: Math.floor(Date.now() / 1000)
-  })
+const sendMessage = async () => {
+  try {
+    await messageRepository.sendMessage({
+      message: `${msg.value}`,
+      date_time: Math.floor(Date.now() / 1000)
+    })
+    Notify.create({
+      message: 'Success',
+      color: 'positive',
+      position: 'top'
+    })
+    msg.value = ''
+  } catch (error) {
+    Notify.create({
+      message: `Error: ${error.message}`,
+      color: 'negative',
+      position: 'top'
+    })
+    throw new Error(error.message)
+  }
+}
+
 
 </script>
 <style scoped>
