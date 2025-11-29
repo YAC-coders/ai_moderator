@@ -20,8 +20,8 @@ const msg = ref('')
 const sendMessage = async () => {
   try {
     await messageRepository.sendMessage({
-      message: `${msg.value}`,
-      date_time: Math.floor(Date.now() / 1000)
+      message: msg.value,
+      date_time: Math.floor(Date.now() / 1000)  // convert milliseconds to seconds
     })
     Notify.create({
       message: 'Success',
