@@ -12,6 +12,7 @@ const endpoints = {
   sendMessage: '/messages',
   getMessages: '/messages',
   deleteMessage: '/v1/message/',
+  deleteAllMessages: '/messages/all',
 }
 
 export { api, endpoints }

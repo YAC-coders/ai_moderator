@@ -17,5 +17,13 @@ export const messageRepository = {
       throw new Error('Failed to load messages: ', error.message)
     }
   },
-  deleteMessage: {},
+  async deleteAllMessages() {
+    try {
+      const response = await api.delete(endpoints.deleteAllMessages)
+      return response.data
+    } catch (error) {
+      throw new Error('Failed to delete all messages: ', error.message)
+    }
+  },
+  // deleteMessage: {},
 }

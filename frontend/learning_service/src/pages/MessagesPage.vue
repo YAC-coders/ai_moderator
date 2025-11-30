@@ -2,10 +2,10 @@
   <q-layout>
     <q-page-container>
       <q-page padding>
-        <h1 class="text-h6 text-center">Messages <q-badge rounded color="primary" :label="[messages.length]"
+        <h1 class="text-h6 text-center">Messages <q-badge rounded color="primary" :label="messages.length"
             align="top" />
         </h1>
-
+        <div class="row justify-end"><q-btn color="negative" label="Delete all" outline @click="confirmDelete" /></div>
         <q-list separator>
           <q-item v-ripple v-for="item in messages" :key="item.id">
             <q-item-section>
@@ -27,12 +27,41 @@
 </template>
 <script setup>
 import { onMounted, ref } from 'vue'
+import { useQuasar } from 'quasar'
 import { messageRepository } from 'src/repositories/messageRepository'
 
 const messages = ref([])
+const $q = useQuasar()
 
 onMounted(async () => {
   messages.value = await messageRepository.getMessages()
   messages.value.sort((a, b) => b.date_time - a.date_time)
 })
+
+
+const deleteAllMessages = async () => {
+  try {
+    await messageRepository.deleteAllMessages()
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+const confirmDelete = () => {
+  $q.dialog({
+    title: 'Confirmation',
+    message: 'Are you sure you want to delete all messages?',
+    ok: {
+      label: 'Yes, delete all',
+      flat: false,
+      color: 'negative'
+    },
+    cancel: {
+      label: 'Cancel',
+      flat: true
+    }
+  }).onOk(() => {
+    deleteAllMessages()
+  })
+}
 </script>
