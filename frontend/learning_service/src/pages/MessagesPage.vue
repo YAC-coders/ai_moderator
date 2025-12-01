@@ -44,21 +44,21 @@ const selectedOption = ref('Newest')
 const selectOptions = ref([
   {
     label: 'Newest',
-    value: 'Newest',
+    value: 'newest',
     icon: 'arrow_up'
   },
   {
     label: 'Oldest',
-    value: 'Oldest',
+    value: 'oldest',
     icon: 'arrow_down'
   }
 ])
 
 const sortMessages = () => {
-  if (selectedOption.value.value === 'Oldest') {
+  if (selectedOption.value.value === 'oldest') {
     messages.value = messages.value.sort((a, b) => a.date_time - b.date_time)
   }
-  if (selectedOption.value.value === 'Newest') {
+  if (selectedOption.value.value === 'newest') {
     messages.value = messages.value.sort((a, b) => b.date_time - a.date_time)
   }
 }
