@@ -5,15 +5,21 @@
         <h1 class="text-h6 text-center">Messages <q-badge rounded color="primary" :label="messages.length"
             align="top" />
         </h1>
-        <div class="row justify-end"><q-btn color="negative" label="Delete all" outline @click="confirmDelete" /></div>
+        <div class="row justify-between">
+          <q-select outlined v-model="selectedOption" :options="selectOptions" dense transition-show="jump-up"
+            transition-hide="jump-up" style="width: 120px" @update:model-value="sortMessages" />
+
+          <q-btn color="negative" label="Delete all" size="sm" outline @click="confirmDelete" />
+        </div>
         <q-list separator>
-          <q-item v-ripple v-for="item in messages" :key="item.id">
+          <q-item v-ripple v-for="item in messages" :key="item.id" class="q-px-none">
             <q-item-section>
               <q-item-label> {{ item.message }}</q-item-label>
               <q-item-label caption>
                 {{ new Date(item.date_time * 1000).toLocaleString("ru-RU") }}
               </q-item-label>
             </q-item-section>
+            <q-checkbox v-model="selected" :val="item.id" />
           </q-item>
         </q-list>
 
@@ -32,6 +38,31 @@ import { messageRepository } from 'src/repositories/messageRepository'
 
 const messages = ref([])
 const $q = useQuasar()
+const selected = ref([])
+
+const selectedOption = ref('Newest')
+const selectOptions = ref([
+  {
+    label: 'Newest',
+    value: 'Newest',
+    icon: 'arrow_up'
+  },
+  {
+    label: 'Oldest',
+    value: 'Oldest',
+    icon: 'arrow_down'
+  }
+])
+
+const sortMessages = () => {
+  if (selectedOption.value.value === 'Oldest') {
+    messages.value = messages.value.sort((a, b) => a.date_time - b.date_time)
+  }
+  if (selectedOption.value.value === 'Newest') {
+    messages.value = messages.value.sort((a, b) => b.date_time - a.date_time)
+  }
+}
+
 
 onMounted(async () => {
   messages.value = await messageRepository.getMessages()
@@ -43,6 +74,11 @@ const deleteAllMessages = async () => {
   try {
     await messageRepository.deleteAllMessages()
   } catch (error) {
+    $q.notify({
+      message: error.message,
+      color: 'negative',
+      position: 'top'
+    })
     console.log(error)
   }
 }
