@@ -1,7 +1,8 @@
 <template>
   <q-page class="flex flex-center" padding>
     <div class="input-bar-container">
-      <q-input rounded outlined autogrow v-model="msg" label="Input your text here...">
+      <q-input rounded outlined autogrow v-model="msg" label="Input your text here..."
+        :rules="[val => val.length >= 3 || 'Please use minimum 3 characters']">
         <template v-slot:prepend> <q-btn icon="attach_file" round flat /></template>
         <template v-slot:append>
           <q-btn icon="arrow_circle_up" round flat @click="sendMessage" /></template>
@@ -18,9 +19,17 @@ import { Notify } from 'quasar'
 const msg = ref('')
 
 const sendMessage = async () => {
+  if (msg.value.length === 0 || msg.value.length < 3) {
+    Notify.create({
+      message: 'Empty message',
+      color: 'warning',
+      position: 'top'
+    })
+    return
+  }
   try {
     await messageRepository.sendMessage({
-      message: msg.value,
+      message: msg.value.trim(),
       date_time: Math.floor(Date.now() / 1000)  // convert milliseconds to seconds
     })
     Notify.create({

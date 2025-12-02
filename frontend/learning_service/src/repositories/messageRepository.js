@@ -25,5 +25,7 @@ export const messageRepository = {
       throw new Error('Failed to delete all messages', error.message)
     }
   },
-  // deleteMessage: {},
+  async deleteSelectedMessages() {
+    alert('Delete selected')
+  },
 }
