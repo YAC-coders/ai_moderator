@@ -2,23 +2,33 @@
   <q-layout>
     <q-page-container>
       <q-page padding>
-        <div class="row justify-end"><q-btn color="negative" label="Delete all" size="sm" outline
-            @click="confirmDelete" /></div>
-        <h1 class="text-h6 text-center">Messages <q-badge rounded color="primary" :label="messages.length"
-            align="top" />
+        <div class="row justify-end">
+          <q-btn color="negative" label="Delete all" size="sm" outline @click="confirmDelete" />
+        </div>
+        <h1 class="text-h6 text-center">
+          Messages <q-badge rounded color="primary" :label="messages.length" align="top" />
         </h1>
-        <div class="row justify-between">
-          <q-select outlined v-model="selectedOption" :options="selectOptions" dense transition-show="jump-up"
-            transition-hide="jump-up" style="width: 150px" @update:model-value="sortMessages" />
+        <div class="row justify-between q-mb-md">
+          <q-select
+            outlined
+            v-model="selectedOption"
+            :options="selectOptions"
+            dense
+            transition-show="jump-up"
+            transition-hide="jump-up"
+            style="width: 150px"
+            @update:model-value="sortMessages"
+          />
 
           <q-btn color="negative" icon="delete" size="sm" outline @click="deleteSelected" />
         </div>
+        <q-space />
         <q-list separator>
           <q-item v-ripple v-for="item in messages" :key="item.id" class="q-px-none">
             <q-item-section>
               <q-item-label> {{ item.message }}</q-item-label>
               <q-item-label caption>
-                {{ new Date(item.date_time * 1000).toLocaleString("ru-RU") }}
+                {{ new Date(item.date_time * 1000).toLocaleString('ru-RU') }}
               </q-item-label>
             </q-item-section>
             <q-checkbox v-model="selected" :val="item.id" />
@@ -40,19 +50,18 @@ import { messageRepository } from 'src/repositories/messageRepository'
 
 const messages = ref([])
 const selected = ref([])
-
-const selectedOption = ref('Newest')
+const selectedOption = ref('Newest first')
 const selectOptions = ref([
   {
     label: 'Newest first',
     value: 'newest',
-    icon: 'arrow_up'
+    icon: 'arrow_up',
   },
   {
     label: 'Oldest first',
     value: 'oldest',
-    icon: 'arrow_down'
-  }
+    icon: 'arrow_down',
+  },
 ])
 
 const sortMessages = () => {
@@ -64,21 +73,27 @@ const sortMessages = () => {
   }
 }
 
-
 onMounted(async () => {
   messages.value = await messageRepository.getMessages()
   messages.value.sort((a, b) => b.date_time - a.date_time)
 })
 
-
 const deleteAllMessages = async () => {
   try {
-    await messageRepository.deleteAllMessages()
+    if (messages.value.length === 0) {
+      Notify.create({
+        message: 'Nothing to delete',
+        color: 'warning',
+        textColor: 'dark',
+      })
+    }
+    await messageRepository.deleteAllMessages(messages.value)
+    messages.value = await messageRepository.getMessages()
   } catch (error) {
     Notify.create({
       message: error.message,
       color: 'negative',
-      position: 'top'
+      textColor: 'dark',
     })
     console.log(error)
   }
@@ -91,23 +106,30 @@ const confirmDelete = () => {
     ok: {
       label: 'Yes, delete all',
       flat: false,
-      color: 'negative'
+      color: 'negative',
     },
     cancel: {
       label: 'Cancel',
-      flat: true
-    }
+      flat: true,
+    },
   }).onOk(() => {
     deleteAllMessages()
   })
 }
 
 const deleteSelected = () => {
-  if (selected.value.length === 0) {
+  if (selected.value.length === 0 && messages.value.length > 0) {
     Notify.create({
       message: 'Select message to delete',
       color: 'warning',
-      position: 'top'
+      textColor: 'dark',
+    })
+    return
+  } else if (messages.value.length === 0) {
+    Notify.create({
+      message: 'No messages to delete',
+      color: 'warning',
+      textColor: 'dark',
     })
     return
   }
@@ -117,20 +139,21 @@ const deleteSelected = () => {
     ok: {
       label: 'Yes',
       flat: false,
-      color: 'negative'
+      color: 'negative',
     },
     cancel: {
       label: 'Cancel',
-      flat: true
-    }
+      flat: true,
+    },
   }).onOk(async () => {
     try {
-      await messageRepository.deleteSelectedMessages()
+      await messageRepository.deleteSelectedMessages(selected)
+      selected.value = []
+      messages.value = await messageRepository.getMessages()
     } catch (error) {
       Notify.create({
         message: error.message,
         color: 'negative',
-        position: 'top'
       })
     }
   })

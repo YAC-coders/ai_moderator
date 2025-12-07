@@ -17,15 +17,22 @@ export const messageRepository = {
       throw new Error('Failed to load messages: ', error.message)
     }
   },
-  async deleteAllMessages() {
+  async deleteAllMessages(msg) {
     try {
-      const response = await api.delete(endpoints.deleteAllMessages)
-      return response.data
+      for (const item of msg) {
+        await api.delete(`${endpoints.deleteMessage}/${item.id}`)
+      }
     } catch (error) {
       throw new Error('Failed to delete all messages', error.message)
     }
   },
-  async deleteSelectedMessages() {
-    alert('Delete selected')
+  async deleteSelectedMessages(selected) {
+    try {
+      for (const id of selected.value) {
+        await api.delete(`${endpoints.deleteMessage}/${id}`)
+      }
+    } catch (error) {
+      throw new Error(error.message)
+    }
   },
 }
