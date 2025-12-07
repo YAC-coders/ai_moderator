@@ -11,7 +11,7 @@ const api = axios.create({
 const endpoints = {
   sendMessage: '/messages',
   getMessages: '/messages',
-  deleteMessage: '/v1/message/',
+  deleteMessage: '/messages',
   deleteAllMessages: '/messages/all',
 }
 

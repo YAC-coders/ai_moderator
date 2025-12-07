@@ -1,7 +1,7 @@
 {
   "name": "learning_service",
   "version": "0.0.1",
-  "description": "A Quasar Project",
+  "description": "UI  for loading and managing relevant data in a vector database.",
   "productName": "learning_service",
   "author": "VitalyMenkeev <login.nomad@ya.ru>",
   "type": "module",
